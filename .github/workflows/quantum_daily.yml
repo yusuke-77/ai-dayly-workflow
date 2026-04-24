@@ -1,1 +1,32 @@
-
+name: Quantum Computer Daily Update
+on: [workflow_dispatch, push]
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install anthropic supabase slack-sdk openpyxl
+      - name: Check secrets
+        run: python -c "import os,sys; missing=[k for k in ['ANTHROPIC_API_KEY','SUPABASE_URL','SUPABASE_KEY','SLACK_BOT_TOKEN'] if not os.environ.get(k)]; print('Missing:',missing) if missing else print('OK'); sys.exit(1) if missing else None"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Run
+        run: python quantum_daily.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: CA4N4ETA7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quantum-report-${{ github.run_number }}
+          path: quantum_computers_*.xlsx
+          retention-days: 30
