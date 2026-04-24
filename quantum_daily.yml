@@ -1,29 +1,28 @@
-name: Quantum Computer Daily Update
- 
+yamlname: Quantum Computer Daily Update
+
 on:
   schedule:
     - cron: '0 23 * * *'
   workflow_dispatch:
- 
+
 jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 20
- 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
- 
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
- 
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install anthropic==0.40.0 supabase==2.3.4 slack-sdk==3.27.0 openpyxl==3.1.2
- 
+
       - name: Check secrets
         run: |
           python - <<'PYEOF'
@@ -34,7 +33,6 @@ jobs:
                   missing.append(k)
           if missing:
               print(f"ERROR: Missing secrets: {missing}")
-              print("Set them at: Settings -> Secrets and variables -> Actions")
               sys.exit(1)
           print("All secrets OK")
           PYEOF
@@ -43,7 +41,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
- 
+
       - name: Run quantum update
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -52,7 +50,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: CA4N4ETA7
         run: python quantum_daily.py
- 
+
       - name: Upload Excel report
         uses: actions/upload-artifact@v4
         if: always()
