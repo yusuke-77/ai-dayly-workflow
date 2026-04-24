@@ -1,4 +1,6 @@
-yamlname: Quantum Computer Daily Update
+yaml
+
+name: Quantum Computer Daily Update
 
 on:
   schedule:
