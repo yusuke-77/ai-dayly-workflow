@@ -1,6 +1,6 @@
 name: Quantum Computer Daily Update
 
-on:
+"on":
   schedule:
     - cron: '0 23 * * *'
   workflow_dispatch:
