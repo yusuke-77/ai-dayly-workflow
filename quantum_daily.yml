@@ -28,5 +28,5 @@ jobs:
         if: always()
         with:
           name: quantum-report-${{ github.run_number }}
-          path: quantum_computers_*.xlsx
+          path: quantum_computers_v2.xlsx
           retention-days: 30
