@@ -5,7 +5,7 @@ name: Quantum Computer Daily Update
     - cron: '0 23 * * *'
   workflow_dispatch:
 
-jobs:
+"jobs":
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 20
