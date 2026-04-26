@@ -1,5 +1,9 @@
 name: Quantum Computer Daily Update
-on: [workflow_dispatch, push]
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: '0 23 * * *'
 jobs:
   update:
     runs-on: ubuntu-latest
