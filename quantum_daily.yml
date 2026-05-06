@@ -1,12 +1,14 @@
 name: Quantum Computer Daily Update
-on:
+"on":
   workflow_dispatch:
   push:
   schedule:
-    - cron: '17 25 * * *'
+    - cron: '37 23 * * *'
+    
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
