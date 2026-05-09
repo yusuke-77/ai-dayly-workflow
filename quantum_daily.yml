@@ -1,10 +1,7 @@
-name: Quantum Computer Daily Update
-
-"on":
-  workflow_dispatch:
-  push:
+on:
   schedule:
-    - cron: '17 23 * * *'
+    - cron: '0 23 * * *'
+  workflow_dispatch:
 
 jobs:
   update:
@@ -17,7 +14,15 @@ jobs:
           python-version: '3.11'
       - run: pip install anthropic supabase slack-sdk openpyxl
       - name: Check secrets
-        run: python -c "import os,sys; missing=[k for k in ['ANTHROPIC_API_KEY','SUPABASE_URL','SUPABASE_KEY','SLACK_BOT_TOKEN'] if not os.environ.get(k)]; print('Missing:',missing) if missing else print('OK'); sys.exit(1) if missing else None"
+        run: |
+          python - <<'PYEOF'
+          import os, sys
+          missing = [k for k in ["ANTHROPIC_API_KEY","SUPABASE_URL","SUPABASE_KEY","SLACK_BOT_TOKEN"] if not os.environ.get(k)]
+          if missing:
+              print("ERROR:", missing)
+              sys.exit(1)
+          print("All secrets OK")
+          PYEOF
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -37,3 +42,4 @@ jobs:
           name: quantum-report-${{ github.run_number }}
           path: quantum_computers_*.xlsx
           retention-days: 30
+          if-no-files-found: ignore
